@@ -37,13 +37,30 @@ Options:
   -h, --help                Show this help message
 ```
 
+## Sample Output
 
+Below is the output when we make std:cout as thread safe. Even then it is NOT guanrenteed that the output we see shows the consumers print the queue items in the order they consumed 
+```shell
+     ./test_threadsafequeues -P5 -C5 -N1 --thread-safe-cout
+Testing unbounded queue...
+Produced by producer thread: 0 item: {0, 0} (c++ thread id): 0x16f21b000
+Produced by producer thread: 3 item: {3, 3} (c++ thread id): 0x16f3bf000
+Produced by producer thread: 4 item: {4, 4} (c++ thread id): 0x16f44b000
+Produced by producer thread: 2 item: {2, 2} (c++ thread id): 0x16f333000
+######  Consumeed by consumer thread: 0 item: {producer_id: 0, 0} (c++ thread id): 0x16f4d7000
+Produced by producer thread: 1 item: {1, 1} (c++ thread id): 0x16f2a7000
+######  Consumeed by consumer thread: 2 item: {producer_id: 4, 4} (c++ thread id): 0x16f5ef000
+######  Consumeed by consumer thread: 3 item: {producer_id: 3, 3} (c++ thread id): 0x16f67b000
+######  Consumeed by consumer thread: 4 item: {producer_id: 2, 2} (c++ thread id): 0x16f707000
+######  Consumeed by consumer thread: 1 item: {producer_id: 1, 1} (c++ thread id): 0x16f563000
+Unbounded queue test completed.
+```
 
 # Future improvements
-1. APIs for thread-safe and non-thread safe differ now i.e eneque/dequeue for thread-safe and push/pop for non-thread-safe. Similarly to python
+1. APIs for thread-safe and non-thread safe differ now i.e eneque/dequeue for thread-safe and push/pop for non-thread-safe. Similarly to python.
 2. Test memory limits for unbounded queue using simulation testiing
-3. serialize queue output to a file in the graceful shutdown and deserialize while looking out
-   This will make a mini rabbitmq because of this conditoned persistence
+3. serialize queue output to a file in the graceful shutdown and deserialize while starting up
+   This will make a mini rabbitmq because of this conditoned persistence.
 
 
 
