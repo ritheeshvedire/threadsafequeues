@@ -15,11 +15,8 @@ These thread are used by concurrent threads to enqueue and dequeue (which pops t
 1) use c++11 or c++14 constructs. No pthreads are allowed. Use safe C++ (for example, using lock_guards, unique_locks or c++ safe pointer mechanisms or atomic counters if possible)
 2) Avoid notifying all threads to wake up as it's unnecessarly wastes CPU cycles. 
 
-# SUPPORT
-1. supports MacOS (Arm64) with Clang and Linux with gcc
- -- Tested on MacOS only. But should work for linux
-
-
+## SUPPORT
+1. supports MacOS (Arm64) with Clang and Linux with gcc.(Tested on MacOS only. But should work for linux)
 
 
 NOTE: We could improve the performance of the overall system, if we there are some threads reading only the front of the queue, using RW locks (or shared mutex for C++17)
