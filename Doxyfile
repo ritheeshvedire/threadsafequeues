@@ -1,0 +1,9 @@
+PROJECT_NAME           = "ThreadSafeQueues"
+OUTPUT_DIRECTORY       = docs
+INPUT                  = ./options.h ./queues ./test_main.cpp
+RECURSIVE              = YES
+EXTRACT_ALL            = YES
+GENERATE_HTML          = YES
+GENERATE_LATEX         = YES
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
