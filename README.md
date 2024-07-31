@@ -1,4 +1,58 @@
-# ThreadSafeQueues
+# Thread-Safe Queues (in C++)
+
+## Goal [WIP]
+Aim is to create a mini project to build thread safe queues in C++. Idea is:
+1. Create thread safe in-memory queues using several concurrent constructs. Goal is to code in C++, but use other language to explain concurrent constructs not available in c++ (like software transactional memory in haskell)
+2. Create a thread safe disk-based queues with reasonable guarentees on durability (i.e durable under certain (preferably) controlled conditions)
+3. create a network based synchrnous clients to push and pop into the queue. (At this point, we will have our own mini rabbitmq)
+4. create a mini kafka like system with reasonable guarentees on delivery semantics and durabilty
+5. Create or use existing performance tools to investigate above things.
+
+## Theory
+
+In a concurrent system, a queue can be a shared resource, necessitating thread-safe access. Concurrent systems can involve:
+
+1.	*User-space threads*: These are mapped 1:1 to kernel threads. Examples include pthreads, std::threads,
+      and the Java Thread class.
+2.	*Green threads or lightweight threads*: These are managed by the programming language runtime, with an M:N mapping
+      between green threads and user-space threads, which in turn map to kernel-level threads through syscalls. Examples include Go coroutines and Haskell lightweight threads.
+
+To avoid data race conditions or liveness/deadlock problems in concurrent systems, several solutions are available:
+
+1.	Using Mutexes (Mutual Exclusion): Locks and unlock functions, supported by hardware, ensure atomic operations.
+	•	Note: Threads might be blocked if the lock is unavailable.
+2.	Using Lock-free Data Structures: Data structures are defined using atomic operations and compare-and-swap constructs provided
+      by the hardware.
+3.	Using Software Transactional Memory (STM): A feature implemented in some programming languages, like Haskell.
+
+This document discusses and provides code and tests for the first two methods (mutexes and lock-free data structures) in C++. It will also briefly cover software transactional memory in Haskell and its applicability in C++.
+
+## General Queue APIs
+
+An abstract queue typically supports the following operations:
+
+1.	push(item): Pushes an item into the queue.
+2.	pop(): Returns an item from the queue.
+
+Additionally, the following operations are often necessary:
+
+3.	is_empty(): Checks if the queue is empty.
+4.	size(): Returns the current size of the queue.
+5.	front(): Peeks at the first element of the queue without popping it.
+6.	is_full(): Checks if the queue is full.
+
+### APIs for Thread-Safe Queues
+
+Designing APIs for thread-safe queues involves several considerations:
+
+1.	*Validity of General Queue APIs:* Are the general queue APIs valid for a concurrent queue as well?
+      - APIs is_empty(), size(), front(), is_full() could be made thread safe without race conditions but a valid value returned by these functions might be invalid, if any other thread changes the structure of the queue (i.e push or pop)
+2.	*Impact of Underlying Data Structure:* Do the APIs change based on the underlying data structure of the queue?
+3.	*T*hread Behavior:* Should threads be blocked until the resource is available, or should there be additional APIs
+      to allow threads to decide what to do if the resource is unavailable?
+
+
+# Current Status
 The code has two threadsafe queues
 
 1. Implement a thread safe wrapper over std::queue
@@ -21,7 +75,7 @@ These thread are used by concurrent threads to enqueue and dequeue (which pops t
 
 NOTE: We could improve the performance of the overall system, if we there are some threads reading only the front of the queue, using RW locks (or shared mutex for C++17)
 
-# How to run
+## How to run
 - `./test_threadsafequeues -h` for help message
 ## help
 ```shell
@@ -56,11 +110,6 @@ Produced by producer thread: 1 item: {1, 1} (c++ thread id): 0x16f2a7000
 Unbounded queue test completed.
 ```
 
-# Future improvements
-1. APIs for thread-safe and non-thread safe differ now i.e eneque/dequeue for thread-safe and push/pop for non-thread-safe. Similarly to python.
-2. Test memory limits for unbounded queue using simulation testiing
-3. serialize queue output to a file in the graceful shutdown and deserialize while starting up
-   This will make a mini rabbitmq because of this conditoned persistence.
 
 
 
